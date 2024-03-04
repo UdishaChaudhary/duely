@@ -16,8 +16,8 @@ class MyApp extends StatelessWidget {
     //build method returns a widget and is called anytime flutter needs to rebuild the UI
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: signUpPage()
-      //LoginPage(), 
+      home: //signUpPage()
+      LoginPage(), 
     );
   }
 }

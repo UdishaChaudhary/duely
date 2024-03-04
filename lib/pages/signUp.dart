@@ -16,10 +16,10 @@ class signUpPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Color.fromARGB(255, 131, 119, 165),
+          backgroundColor: Color.fromARGB(255, 144, 116, 219),
           title: Text("Duely",
             style: TextStyle(
-              color: Colors.black,
+              color: Colors.white,
               fontFamily: "Script",
               fontSize: 30,
             ),
