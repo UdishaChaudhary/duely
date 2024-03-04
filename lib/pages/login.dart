@@ -3,18 +3,31 @@ import 'package:duely/components/button.dart';
 import 'signUp.dart';
 import 'package:flutter/material.dart'; // gives access to pre-defined widgets including
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   LoginPage({super.key});
 
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
   // text editing controllers
   final usernameController = TextEditingController();
+
   final passwordController = TextEditingController();
 
   //sign user in method
-  void login(){}
+  void login(BuildContext ctx) {
+    final login_details = {
+      "username": usernameController.text,
+      "password": passwordController.text,
+    };
 
-  void signn(BuildContext ctx){
-    Navigator.of(ctx).push(MaterialPageRoute(builder:(_){
+    print(login_details);
+  }
+
+  void sign(BuildContext ctx) {
+    Navigator.of(ctx).push(MaterialPageRoute(builder: (_) {
       return signUpPage();
     }));
   }
@@ -23,23 +36,21 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Color.fromARGB(255, 144, 116, 219),
-          title: Text("Duely",
-            style: TextStyle(
-              color: Colors.white,
-              fontFamily: "Script",
-              fontSize: 30,
-            ),
-          )
-        ),
-      
-        backgroundColor: Color.fromARGB(255, 242, 234, 249),
+            backgroundColor: Color.fromARGB(255, 105, 49, 162),
+            title: Text(
+              "Duely",
+              style: TextStyle(
+                color: Colors.white,
+                fontFamily: "Script",
+                fontSize: 30,
+              ),
+            )),
         body: SafeArea(
             child: Center(
           child: Column(
             children: [
               const SizedBox(height: 60),
- 
+
               //logo
               const Icon(
                 Icons.lock,
@@ -69,14 +80,14 @@ class LoginPage extends StatelessWidget {
                 obscureText: true,
               ),
 
-
               const SizedBox(height: 25),
 
               MyButton(
                 buttonName: "Log in",
-                onTap: login,
+                onTap: () {
+                  login(context);
+                },
               ),
-
 
               const SizedBox(height: 50),
 
@@ -89,10 +100,10 @@ class LoginPage extends StatelessWidget {
 
               MyButton(
                 buttonName: "Sign up",
-                onTap: (){signn(context);},
+                onTap: () {
+                  sign(context);
+                },
               ),
-
-
             ],
           ),
         )));

@@ -1,5 +1,6 @@
 import 'package:duely/components/button.dart';
 import 'package:duely/components/MyTextField.dart';
+import 'package:duely/pages/login.dart';
 import 'package:flutter/material.dart'; // gives access to pre-defined widgets including
 
 class signUpPage extends StatelessWidget {
@@ -7,25 +8,37 @@ class signUpPage extends StatelessWidget {
 
   // text editing controllers
   final usernameController = TextEditingController();
+  final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
   //sign user in method
-  void signup() {}
+  void signup(BuildContext ctx) {
+    final signup_details = {
+      "username": usernameController.text,
+      "email": emailController.text,
+      "password": passwordController.text,
+    };
+
+    print(signup_details);
+
+    Navigator.of(ctx).push(MaterialPageRoute(builder: (_) {
+      return LoginPage();
+    }));
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Color.fromARGB(255, 144, 116, 219),
-          title: Text("Duely",
-            style: TextStyle(
-              color: Colors.white,
-              fontFamily: "Script",
-              fontSize: 30,
-            ),
-          )
-        ),
-        backgroundColor: Color.fromARGB(255, 242, 234, 249),
+            backgroundColor: Color.fromARGB(255, 105, 49, 162),
+            title: Text(
+              "Duely",
+              style: TextStyle(
+                color: Colors.white,
+                fontFamily: "Script",
+                fontSize: 30,
+              ),
+            )),
         body: SafeArea(
             child: Center(
           child: Column(
@@ -34,7 +47,7 @@ class signUpPage extends StatelessWidget {
 
               //logo
               const Icon(
-                Icons.lock,
+                Icons.person,
                 size: 100,
               ),
 
@@ -54,10 +67,10 @@ class signUpPage extends StatelessWidget {
               ),
 
               const SizedBox(height: 25),
-              //email
+              // email
               MyTextField(
-                controller: passwordController,
-                hintText: 'Enter your email',
+                controller: emailController,
+                hintText: 'Enter a username or email',
                 obscureText: false,
               ),
 
@@ -73,7 +86,9 @@ class signUpPage extends StatelessWidget {
 
               MyButton(
                 buttonName: "Sign up",
-                onTap: signup,
+                onTap: () {
+                  signup(context);
+                },
               ),
             ],
           ),
