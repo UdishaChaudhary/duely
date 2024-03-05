@@ -1,6 +1,7 @@
-import 'package:duely/components/MyTextField.dart';
+import 'package:duely/components/my_text_field.dart';
 import 'package:duely/components/button.dart';
-import 'signUp.dart';
+import 'package:duely/pages/homepage.dart';
+import 'sign_up.dart';
 import 'package:flutter/material.dart'; // gives access to pre-defined widgets including
 
 class LoginPage extends StatefulWidget {
@@ -24,6 +25,12 @@ class _LoginPageState extends State<LoginPage> {
     };
 
     print(login_details);
+
+    Navigator.of(ctx).push(MaterialPageRoute(builder: (_) {
+      return MyHompeage();
+    }));
+
+
   }
 
   void sign(BuildContext ctx) {

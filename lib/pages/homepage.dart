@@ -1,5 +1,5 @@
+import 'package:duely/pages/add_task_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart'; // gives access to pre-defined widgets including
 
 class MyHompeage extends StatelessWidget {
   MyHompeage({super.key});
@@ -12,10 +12,11 @@ class MyHompeage extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: Color.fromARGB(255, 255, 255, 255),
           leading: IconButton(
-              icon: const Icon(Icons.home),
+              icon: const Icon(Icons.add_alert),
               onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('This is home')));
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+                  return AddTask();
+                }));
               }),
           actions: [
             IconButton(
@@ -27,6 +28,8 @@ class MyHompeage extends StatelessWidget {
             )
           ],
         ),
+
+
         body: Column(
           crossAxisAlignment:
               CrossAxisAlignment.start, // Align children to the start (left)
@@ -62,8 +65,9 @@ class MyHompeage extends StatelessWidget {
                         ),
                       ));
                 },
-                separatorBuilder: (BuildContext context, int index) =>
-                    Divider(),
+                separatorBuilder: (BuildContext context, int index) => Divider(
+                  color: Colors.transparent,
+                ),
               ),
             ),
           ],

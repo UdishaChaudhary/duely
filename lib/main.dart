@@ -1,3 +1,4 @@
+import 'package:duely/pages/add_task_page.dart';
 import 'package:flutter/material.dart'; // gives access to pre-defined widgets including
 import 'pages/homepage.dart';
 import 'pages/login.dart';
@@ -18,13 +19,14 @@ class MyApp extends StatelessWidget {
       title: "Duely",
       theme: ThemeData(
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.purple),
-        scaffoldBackgroundColor: Color.fromARGB(255, 242, 234, 249),
+        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blueGrey),
+        scaffoldBackgroundColor: Color.fromARGB(255, 248, 248, 248),
         
       ),
     
       debugShowCheckedModeBanner: false,
-      home: MyHompeage()
+      home: AddTask() 
+      //MyHompeage()
       //LoginPage(),
       //signUpPage()
     );

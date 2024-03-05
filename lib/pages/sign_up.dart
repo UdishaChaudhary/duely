@@ -1,5 +1,5 @@
 import 'package:duely/components/button.dart';
-import 'package:duely/components/MyTextField.dart';
+import 'package:duely/components/my_text_field.dart';
 import 'package:duely/pages/login.dart';
 import 'package:flutter/material.dart'; // gives access to pre-defined widgets including
 
