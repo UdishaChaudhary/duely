@@ -1,29 +1,39 @@
 import 'package:duely/components/button.dart';
 import 'package:duely/components/my_text_field.dart';
 import 'package:duely/pages/login.dart';
+import "package:firebase_auth/firebase_auth.dart";
 import 'package:flutter/material.dart'; // gives access to pre-defined widgets including
 
-class signUpPage extends StatelessWidget {
-  signUpPage({super.key});
+class signUpPage extends StatefulWidget {
+  final VoidCallback showLoginPage;
+  const signUpPage({
+    Key? key,
+    required this.showLoginPage,}) : super(key: key);
 
+  @override
+  State<signUpPage> createState() => _signUpPageState();
+}
+
+class _signUpPageState extends State<signUpPage> {
   // text editing controllers
-  final usernameController = TextEditingController();
   final emailController = TextEditingController();
+
   final passwordController = TextEditingController();
 
-  //sign user in method
-  void signup(BuildContext ctx) {
-    final signup_details = {
-      "username": usernameController.text,
-      "email": emailController.text,
-      "password": passwordController.text,
-    };
+  final confrimController = TextEditingController();
 
-    print(signup_details);
+  Future signUp() async {
+    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim());
+  }
 
-    Navigator.of(ctx).push(MaterialPageRoute(builder: (_) {
-      return LoginPage();
-    }));
+  @override
+  void dispose(){
+    emailController.dispose();
+    passwordController.dispose();
+    confrimController.dispose();
+    super.dispose();
   }
 
   @override
@@ -61,24 +71,24 @@ class signUpPage extends StatelessWidget {
               const SizedBox(height: 25),
               // username
               MyTextField(
-                controller: usernameController,
-                hintText: 'Enter your full name',
+                controller: emailController,
+                hintText: 'Enter your email',
                 obscureText: false,
               ),
 
               const SizedBox(height: 25),
               // email
               MyTextField(
-                controller: emailController,
-                hintText: 'Enter a username or email',
+                controller: passwordController,
+                hintText: 'Enter a password',
                 obscureText: false,
               ),
 
               const SizedBox(height: 25),
               //password
               MyTextField(
-                controller: passwordController,
-                hintText: 'Enter a password',
+                controller: confrimController,
+                hintText: 'Confirm your password',
                 obscureText: true,
               ),
 
@@ -87,7 +97,7 @@ class signUpPage extends StatelessWidget {
               MyButton(
                 buttonName: "Sign up",
                 onTap: () {
-                  signup(context);
+                  signUp();
                 },
               ),
             ],

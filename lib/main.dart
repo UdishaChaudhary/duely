@@ -1,9 +1,5 @@
-import 'package:duely/pages/add_task_page.dart';
-import 'package:duely/pages/main_page.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:duely/auth/main_page.dart';
 import 'package:flutter/material.dart'; // gives access to pre-defined widgets including
-import 'pages/homepage.dart';
-import 'pages/login.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
@@ -34,10 +30,6 @@ class MyApp extends StatelessWidget {
     
       debugShowCheckedModeBanner: false,
       home: MainPage()
-      //AddTask() 
-      //MyHompeage()
-      //LoginPage(),
-      //signUpPage()
     );
   }
 }

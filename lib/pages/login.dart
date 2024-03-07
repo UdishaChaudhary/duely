@@ -1,12 +1,14 @@
 import 'package:duely/components/my_text_field.dart';
 import 'package:duely/components/button.dart';
-import 'package:duely/pages/homepage.dart';
 import 'package:duely/pages/sign_up.dart';
 import "package:firebase_auth/firebase_auth.dart";
 import 'package:flutter/material.dart'; // gives access to pre-defined widgets including
 
 class LoginPage extends StatefulWidget {
-  LoginPage({super.key});
+
+  final VoidCallback showSignupPage;
+  const LoginPage({
+    Key? key, required this.showSignupPage}) : super(key: key);
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -14,27 +16,21 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   // text editing controllers
-  final usernameController = TextEditingController();
+  final emailController = TextEditingController();
 
   final passwordController = TextEditingController();
 
   Future logIn() async {
     await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: usernameController.text.trim(),
+        email: emailController.text.trim(),
         password: passwordController.text.trim());
-  }
-
-  void sign(BuildContext ctx) {
-    Navigator.of(ctx).push(MaterialPageRoute(builder: (_) {
-      return signUpPage();
-    }));
   }
 
 
 
   @override
   void dispose(){
-    usernameController.dispose();
+    emailController.dispose();
     passwordController.dispose();
     super.dispose();
   }
@@ -75,7 +71,7 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(height: 25),
               // username
               MyTextField(
-                controller: usernameController,
+                controller: emailController,
                 hintText: 'Username',
                 obscureText: false,
               ),
@@ -108,9 +104,8 @@ class _LoginPageState extends State<LoginPage> {
 
               MyButton(
                 buttonName: "Sign up",
-                onTap: () {
-                  sign(context);
-                },
+                onTap: widget.showSignupPage,
+                
               ),
             ],
           ),

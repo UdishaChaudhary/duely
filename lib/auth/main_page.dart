@@ -1,6 +1,6 @@
 import 'package:duely/pages/homepage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'login.dart';
+import 'auth_page.dart';
 import 'package:flutter/material.dart';
 
 
@@ -18,11 +18,10 @@ class MainPage extends StatelessWidget{
             return MyHompeage();
           } 
           else {
-            return LoginPage();
+            return AuthPage();
           }
         },
       ),
     );
   }
-
 }
