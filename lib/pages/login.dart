@@ -1,8 +1,10 @@
 import 'package:duely/components/my_text_field.dart';
+import 'package:google_fonts/google_fonts.dart'; 
 import 'package:duely/components/button.dart';
 import 'package:duely/pages/sign_up.dart';
 import "package:firebase_auth/firebase_auth.dart";
 import 'package:flutter/material.dart'; // gives access to pre-defined widgets including
+
 
 class LoginPage extends StatefulWidget {
 
@@ -43,11 +45,7 @@ class _LoginPageState extends State<LoginPage> {
             backgroundColor: Color.fromARGB(255, 105, 49, 162),
             title: Text(
               "Duely",
-              style: TextStyle(
-                color: Colors.white,
-                fontFamily: "Script",
-                fontSize: 30,
-              ),
+              style: GoogleFonts.calligraffitti()
             )),
         body: SafeArea(
             child: Center(
