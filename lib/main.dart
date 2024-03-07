@@ -3,7 +3,6 @@ import 'package:flutter/material.dart'; // gives access to pre-defined widgets i
 import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
-
   WidgetsFlutterBinding.ensureInitialized(); //gives access to negative code
 
   await Firebase.initializeApp();
@@ -20,16 +19,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     //build method returns a widget and is called anytime flutter needs to rebuild the UI
     return MaterialApp(
-      title: "Duely",
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blueGrey),
-        scaffoldBackgroundColor: Color.fromARGB(255, 248, 248, 248),
-        
-      ),
-    
-      debugShowCheckedModeBanner: false,
-      home: MainPage()
-    );
+        title: "Duely",
+        theme: ThemeData(
+          useMaterial3: true,
+          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blueGrey),
+          scaffoldBackgroundColor: Color.fromARGB(255, 237, 237, 237),
+        ),
+        debugShowCheckedModeBanner: false,
+        home: MainPage());
   }
 }

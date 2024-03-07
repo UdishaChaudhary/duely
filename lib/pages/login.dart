@@ -1,16 +1,13 @@
 import 'package:duely/components/my_text_field.dart';
-import 'package:google_fonts/google_fonts.dart'; 
+import 'package:flutter/widgets.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:duely/components/button.dart';
-import 'package:duely/pages/sign_up.dart';
 import "package:firebase_auth/firebase_auth.dart";
 import 'package:flutter/material.dart'; // gives access to pre-defined widgets including
 
-
 class LoginPage extends StatefulWidget {
-
   final VoidCallback showSignupPage;
-  const LoginPage({
-    Key? key, required this.showSignupPage}) : super(key: key);
+  const LoginPage({Key? key, required this.showSignupPage}) : super(key: key);
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -28,25 +25,23 @@ class _LoginPageState extends State<LoginPage> {
         password: passwordController.text.trim());
   }
 
-
-
   @override
-  void dispose(){
+  void dispose() {
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
   }
 
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-            backgroundColor: Color.fromARGB(255, 105, 49, 162),
-            title: Text(
-              "Duely",
-              style: GoogleFonts.calligraffitti()
-            )),
+            backgroundColor: Color.fromARGB(255, 145, 102, 188),
+            title: Text("Duely",
+                style: GoogleFonts.calligraffitti(
+                    color: Colors.white,
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold))),
         body: SafeArea(
             child: Center(
           child: Column(
@@ -93,17 +88,28 @@ class _LoginPageState extends State<LoginPage> {
 
               const SizedBox(height: 50),
 
-              Text(
-                'Sign up if you are new',
-                style: TextStyle(color: Colors.black, fontSize: 16),
-              ),
-
-              const SizedBox(height: 25),
-
-              MyButton(
-                buttonName: "Sign up",
-                onTap: widget.showSignupPage,
-                
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Not a registered member? ',
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16),
+                  ),
+                  GestureDetector(
+                    onTap: widget.showSignupPage,
+                    child: Text(
+                      'Register now',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
