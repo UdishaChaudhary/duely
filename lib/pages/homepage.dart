@@ -1,8 +1,18 @@
 import 'package:duely/pages/add_task_page.dart';
 import 'package:flutter/material.dart';
+import "package:firebase_auth/firebase_auth.dart";
 
-class MyHompeage extends StatelessWidget {
+
+class MyHompeage extends StatefulWidget {
   MyHompeage({super.key});
+
+  @override
+  State<MyHompeage> createState() => _MyHompeageState();
+}
+
+class _MyHompeageState extends State<MyHompeage> {
+  
+  final user = FirebaseAuth.instance.currentUser!;
 
   final tasks = ["ff", "ff", "ff", "cdhsbcd", "dhjbfk"];
 
@@ -22,8 +32,7 @@ class MyHompeage extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.menu),
               onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('This is options')));
+                FirebaseAuth.instance.signOut();
               },
             )
           ],

@@ -1,7 +1,8 @@
 import 'package:duely/components/my_text_field.dart';
 import 'package:duely/components/button.dart';
 import 'package:duely/pages/homepage.dart';
-import 'sign_up.dart';
+import 'package:duely/pages/sign_up.dart';
+import "package:firebase_auth/firebase_auth.dart";
 import 'package:flutter/material.dart'; // gives access to pre-defined widgets including
 
 class LoginPage extends StatefulWidget {
@@ -17,20 +18,10 @@ class _LoginPageState extends State<LoginPage> {
 
   final passwordController = TextEditingController();
 
-  //sign user in method
-  void login(BuildContext ctx) {
-    final login_details = {
-      "username": usernameController.text,
-      "password": passwordController.text,
-    };
-
-    print(login_details);
-
-    Navigator.of(ctx).push(MaterialPageRoute(builder: (_) {
-      return MyHompeage();
-    }));
-
-
+  Future logIn() async {
+    await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: usernameController.text.trim(),
+        password: passwordController.text.trim());
   }
 
   void sign(BuildContext ctx) {
@@ -39,6 +30,16 @@ class _LoginPageState extends State<LoginPage> {
     }));
   }
 
+
+
+  @override
+  void dispose(){
+    usernameController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,7 +93,7 @@ class _LoginPageState extends State<LoginPage> {
               MyButton(
                 buttonName: "Log in",
                 onTap: () {
-                  login(context);
+                  logIn();
                 },
               ),
 

@@ -1,9 +1,17 @@
 import 'package:duely/pages/add_task_page.dart';
+import 'package:duely/pages/main_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart'; // gives access to pre-defined widgets including
 import 'pages/homepage.dart';
 import 'pages/login.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+void main() async {
+
+  WidgetsFlutterBinding.ensureInitialized(); //gives access to negative code
+
+  await Firebase.initializeApp();
+
   runApp(
       MyApp()); //runapp is a global function that takes a signle widget in the argument
 }
@@ -25,7 +33,8 @@ class MyApp extends StatelessWidget {
       ),
     
       debugShowCheckedModeBanner: false,
-      home: AddTask() 
+      home: MainPage()
+      //AddTask() 
       //MyHompeage()
       //LoginPage(),
       //signUpPage()

@@ -1,5 +1,6 @@
 import "package:duely/components/button.dart";
 import "package:duely/components/my_text_field.dart";
+import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 
 class AddTask extends StatefulWidget {
@@ -11,16 +12,19 @@ class AddTask extends StatefulWidget {
 
 class _AddTaskState extends State<AddTask> {
   DateTime _dateTime = DateTime.now();
-
   final taskName = TextEditingController();
   final description = TextEditingController();
 
-  void submit_reminder(BuildContext ctx) {
+
+  
+  void submitReminder(BuildContext ctx) {
     final reminder_details = {
-      "task-name": taskName,
-      "task-desc": description,
+      "task-name": taskName.text.trim(),
+      "task-desc": description.text.trim(),
       "task-date": _dateTime
     };
+    
+    print(reminder_details);
   }
 
   void _showDatePicker(BuildContext ctx) {
@@ -130,7 +134,7 @@ class _AddTaskState extends State<AddTask> {
                   MyButton(
                     buttonName: "Submit",
                     onTap: () {
-                      submit_reminder(context);
+                      submitReminder(context);
                     },
                   ),
                 ],
