@@ -1,6 +1,7 @@
 import 'package:duely/auth/main_page.dart';
 import 'package:flutter/material.dart'; // gives access to pre-defined widgets including
 import 'package:firebase_core/firebase_core.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); //gives access to negative code
@@ -21,6 +22,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         title: "Duely",
         theme: ThemeData(
+          textTheme: TextTheme(bodyMedium: GoogleFonts.roboto()),
           useMaterial3: true,
           colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blueGrey),
           scaffoldBackgroundColor: Color.fromARGB(255, 237, 237, 237),
