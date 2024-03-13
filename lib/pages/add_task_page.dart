@@ -1,7 +1,6 @@
 import "package:duely/components/button.dart";
 import "package:duely/components/my_text_field.dart";
 import "package:flutter/material.dart";
-import "package:google_fonts/google_fonts.dart";
 
 class AddTask extends StatefulWidget {
   AddTask({super.key});
@@ -12,9 +11,9 @@ class AddTask extends StatefulWidget {
 
 class _AddTaskState extends State<AddTask> {
   DateTime _dateTime = DateTime.now();
+  String _dropdownValue = "High_priority";
   final taskName = TextEditingController();
   final description = TextEditingController();
-
 
   void submitReminder(BuildContext ctx) {
     final reminder_details = {
@@ -22,7 +21,7 @@ class _AddTaskState extends State<AddTask> {
       "task-desc": description.text.trim(),
       "task-date": _dateTime
     };
-    
+
     print(reminder_details);
   }
 
@@ -36,6 +35,7 @@ class _AddTaskState extends State<AddTask> {
       (value) => {_dateTime = value!},
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +68,7 @@ class _AddTaskState extends State<AddTask> {
                   .start, // Align children to the start (left)
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(left: 20.0,bottom: 5),
+                  padding: const EdgeInsets.only(left: 20.0, bottom: 5),
                   child: Text(
                     'Title',
                     style: TextStyle(
@@ -84,7 +84,7 @@ class _AddTaskState extends State<AddTask> {
                 ),
                 const SizedBox(height: 30),
                 Padding(
-                  padding: const EdgeInsets.only(left: 20.0,bottom: 5),
+                  padding: const EdgeInsets.only(left: 20.0, bottom: 5),
                   child: Text(
                     'Description (Optional)',
                     style: TextStyle(
@@ -100,7 +100,7 @@ class _AddTaskState extends State<AddTask> {
                 ),
                 const SizedBox(height: 30),
                 Padding(
-                  padding: const EdgeInsets.only(left: 20.0,bottom: 5),
+                  padding: const EdgeInsets.only(left: 20.0, bottom: 5),
                   child: Text(
                     'Final Date (dd-mm-yy)',
                     style: TextStyle(
@@ -109,30 +109,35 @@ class _AddTaskState extends State<AddTask> {
                         fontWeight: FontWeight.w500),
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Text(
-                      '${_dateTime.day}-${_dateTime.month}-${_dateTime.year}',
-                      style: TextStyle(
-                          color: const Color.fromARGB(255, 39, 39, 39),
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500),
-                    ),
-                    MaterialButton(
-                      onPressed: () {
-                        _showDatePicker(context);
-                      },
-                      color: Colors.green,
-                      
-                      child: Text("Choose Date"),
-                      
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 30),
                 Padding(
-                  padding: const EdgeInsets.only(left: 20.0,bottom: 5),
+                  padding: const EdgeInsets.only(left: 20.0),
+                  child: Row(
+                    children: [
+                      Text(
+                        '${_dateTime.day}-${_dateTime.month}-${_dateTime.year}',
+                        style: TextStyle(
+                            color: const Color.fromARGB(255, 39, 39, 39),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500),
+                      ),
+
+                      const SizedBox(width: 30),
+
+                      MaterialButton(
+                        onPressed: () {
+                          _showDatePicker(context);
+                        },
+                        color: Color.fromARGB(255, 255, 255, 255),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Text("Choose Date"),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.only(left: 20.0, bottom: 5),
                   child: Text(
                     'Select Priority',
                     style: TextStyle(
@@ -141,9 +146,14 @@ class _AddTaskState extends State<AddTask> {
                         fontWeight: FontWeight.w500),
                   ),
                 ),
-                const SizedBox(height: 30),
+
+              
+                
+
+
+
                 MyButton(
-                  buttonName: "Submit",
+                  buttonName: "Done",
                   onTap: () {
                     submitReminder(context);
                   },
