@@ -1,4 +1,3 @@
-pymongo
-flask
-collections.abc
-bson
+pymongo==3.12.0
+flask==2.0.1
+bson==0.5.10
