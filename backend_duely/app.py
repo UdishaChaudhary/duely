@@ -1,7 +1,6 @@
 from flask import Flask, jsonify, request
 from collections.abc import MutableMapping  # Correct import for Python 3.10+
 import pymongo
-from bson import ObjectId
 from urllib.parse import quote_plus
 import certifi
 
