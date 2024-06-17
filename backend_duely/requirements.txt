@@ -1,0 +1,4 @@
+pymongo
+flask
+collections.abc
+bson
