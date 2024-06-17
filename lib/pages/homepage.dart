@@ -1,85 +1,427 @@
+import 'dart:ffi';
+
 import 'package:duely/pages/add_task_page.dart';
+import 'package:duely/pages/login.dart';
 import 'package:flutter/material.dart';
-import "package:firebase_auth/firebase_auth.dart";
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:duely/components/task_clips.dart';
+import "package:http/http.dart" as http;
+import "dart:convert";
 
+/*
+class Task {
+  final String priority;
+  final DateTime taskDate;
+  final String taskDesc;
+  final String taskName;
 
-class MyHompeage extends StatefulWidget {
-  MyHompeage({super.key});
+  Task({
+    required this.priority,
+    required this.taskDate,
+    required this.taskDesc,
+    required this.taskName,
+  });
+
+  factory Task.fromMap(Map<String, dynamic> map) {
+    return Task(
+      priority: map['priority'],
+      taskDate: DateTime.parse(map['task-date']),
+      taskDesc: map['task-desc'],
+      taskName: map['task-name'],
+    );
+  }
+}*/
+
+class MyHompage extends StatefulWidget {
+  MyHompage({super.key});
 
   @override
-  State<MyHompeage> createState() => _MyHompeageState();
+  State<MyHompage> createState() => _MyHompageState();
 }
 
-class _MyHompeageState extends State<MyHompeage> {
-  
+class _MyHompageState extends State<MyHompage> {
   final user = FirebaseAuth.instance.currentUser!;
 
-  final tasks = ["ff", "ff", "ff", "cdhsbcd", "dhjbfk"];
+  // Get the current user
+  final User? currentUser = FirebaseAuth.instance.currentUser;
+
+  // Syntax for list : Type of a List (Array): List<TYPE_OF_MEMBER>
+  // Syntax for dictionaries : (Key-Values): Map<Key_TYPE, VALUE_TYPE>
+  List<Map<String, dynamic>> criticalTasks = [];
+  List<Map<String, dynamic>> mediumTasks = [];
+  List<Map<String, dynamic>> lowTasks = [];
+
+  Future<void> fetchReminder() async {
+    if (currentUser == null) {
+      print('No user is currently signed in.');
+      return;
+    }
+
+    final email = currentUser!.email;
+
+    if (email == null) {
+      print('User email is null.');
+      return;
+    }
+
+    final response = await http.post(
+      Uri.parse('http://127.0.0.1:5000/homepage'),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({'email': email}),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      print('Reminders fetched successfully: $data');
+      // Ensure each task is a Map<String, dynamic>
+      List<Map<String, dynamic>> tasks =
+          List<Map<String, dynamic>>.from(data['tasks']);
+
+      criticalTasks.addAll(tasks
+          .where((task) => task['priority'] == 'Critical')
+          .map((task) => {
+                'priority': task['priority'],
+                'task-date': DateTime.parse(task['task-date']),
+                'task-desc': task['task-desc'],
+                'task-name': task['task-name'],
+              })
+          .toList());
+
+      print(criticalTasks);
+
+      mediumTasks.addAll(tasks
+          .where((task) => task['priority'] == 'Medium')
+          .map((task) => {
+                'priority': task['priority'],
+                'task-date': DateTime.parse(task['task-date']),
+                'task-desc': task['task-desc'],
+                'task-name': task['task-name'],
+              })
+          .toList());
+
+      print(mediumTasks);
+
+      lowTasks.addAll(tasks
+          .where((task) => task['priority'] == 'Low')
+          .map((task) => {
+                'priority': task['priority'],
+                'task-date': DateTime.parse(task['task-date']),
+                'task-desc': task['task-desc'],
+                'task-name': task['task-name'],
+              })
+          .toList());
+
+      print(lowTasks);
+    } else {
+      print('Failed to fetch reminders: ${response.body}');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchReminder();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Color.fromARGB(255, 255, 255, 255),
-          leading: IconButton(
-              icon: const Icon(Icons.add_alert),
-              onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-                  return AddTask();
-                }));
-              }),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.menu),
-              onPressed: () {
-                FirebaseAuth.instance.signOut();
-              },
-            )
-          ],
+      backgroundColor: Color.fromARGB(255, 255, 255, 255),
+      appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 145, 117, 184),
+        /* leading: IconButton(
+        icon: const Icon(Icons.add_alert, color: Colors.white),
+        onPressed: () {
+          Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+            return AddTask();
+          }));
+        },
+      ),*/
+        title: Text(
+          'Duely',
+          style: GoogleFonts.calligraffitti(
+            color: Color.fromARGB(255, 255, 255, 255),
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-
-
-        body: Column(
-          crossAxisAlignment:
-              CrossAxisAlignment.start, // Align children to the start (left)
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                'Todays\'s top reminders!',
-                textAlign: TextAlign.start,
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+      ),
+      endDrawer: Drawer(
+        child: Container(
+          color: Color.fromARGB(255, 199, 188, 209),
+          child: ListView(
+            children: [
+              DrawerHeader(
+                child: Icon(
+                  Icons.home,
+                  size: 45,
                 ),
               ),
-            ),
-            Expanded(
-              child: ListView.separated(
-                padding: const EdgeInsets.all(8),
-                itemCount: tasks.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                      padding: const EdgeInsets.all(100),
-                      height: 150,
+              ListTile(
+                leading: Icon(Icons.home),
+                title: Text('Homepage',
+                    style: TextStyle(fontSize: 14, color: Color(0xFF323030))),
+                onTap: () {
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => MyHompage()));
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.add),
+                title: Text('Add Task',
+                    style: TextStyle(fontSize: 14, color: Color(0xFF323030))),
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+                    return AddTask();
+                  }));
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.lock),
+                title: Text('Logout',
+                    style: TextStyle(fontSize: 14, color: Color(0xFF323030))),
+                onTap: () {
+                  FirebaseAuth.instance.signOut();
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 20),
+          child: Column(
+            // this column is for covering all 3 section
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Stack(
+                alignment: AlignmentDirectional.topCenter,
+                children: [
+                  if (criticalTasks.isNotEmpty)
+                    Container(
+                      // Container for whole top section (inivisible box)
+                      color: Color.fromARGB(0, 255, 255, 255),
+                      padding: const EdgeInsets.only(top: 12.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Color.fromARGB(143, 155, 114, 208),
+                          borderRadius: BorderRadius.circular(15),
+                          /*border: Border.all(
+                                      color: Color.fromARGB(255, 97, 17, 172),
+                                      width: 0.25,),*/
+                          
+                        ),
+                        padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
+                        child: Column(
+                          children: criticalTasks.map((task) {
+                            return Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 15.0, left: 5, right: 5),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(15),
+                                child: Container(
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    color: Color.fromRGBO(255, 255, 255, 0.97),
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        task['task-name'],
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      SizedBox(height: 8),
+                                      Text(
+                                        task['task-desc'],
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                      SizedBox(height: 8),
+                                      Text(
+                                        'Due: ${task['task-date'].toLocal().toString().split(' ')[0]}',
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ),
+                  Container(
+                    width: 200, // or any width you prefer
+                    height: 28, // or any height you prefer
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: Color.fromARGB(255, 144, 90, 182),
+                    ),
+                    child: Text(
+                      'Today\'s Top Reminders',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: GoogleFonts.marcellus().fontFamily,
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 20.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Flexible(
+                      child: Divider(
+                        color: Colors.black,
+                        thickness: 0.2,
+                        endIndent: 0,
+                        indent: 10,
+                      ),
+                    ),
+                    Container(
+                      width: 180, // or any width you prefer
+                      height: 28, // or any height you prefer
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
-                        color: Color.fromARGB(255, 240, 120, 120),
+                        color: Color.fromARGB(220, 138, 104, 169),
                       ),
                       child: Text(
-                        'task 1 ${tasks[index]}',
+                        'Medium Priority',
+                        textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: Colors.black,
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          fontFamily: GoogleFonts.marcellus().fontFamily,
+
                         ),
-                      ));
-                },
-                separatorBuilder: (BuildContext context, int index) => Divider(
-                  color: Colors.transparent,
+                      ),
+                    ),
+                    Flexible(
+                      child: Divider(
+                        color: const Color.fromARGB(255, 0, 0, 0),
+                        thickness: 0.2,
+                        endIndent: 10,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
-          ],
-        ));
+              if (mediumTasks.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 20.0),
+                  child: SizedBox(
+                    height: 150,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: mediumTasks.map((task) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: TaskClips(
+                            taskDesc: task['task-desc'],
+                            taskName: task['task-name'],
+                            taskDate: task['task-date']
+                                .toLocal()
+                                .toString()
+                                .split(' ')[0],
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ),
+              Padding(
+                padding: const EdgeInsets.only(top: 25.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Flexible(
+                      child: Divider(
+                        color: Colors.black,
+                        thickness: 0.2,
+                        endIndent: 0,
+                        indent: 10,
+                      ),
+                    ),
+                    Container(
+                      width: 180, // or any width you prefer
+                      height: 28, // or any height you prefer
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Color.fromARGB(255, 106, 111, 168),
+                      ),
+                      child: Text(
+                        'Low Priority',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          fontFamily: GoogleFonts.marcellus().fontFamily,
+
+                        ),
+                      ),
+                    ),
+                    Flexible(
+                      child: Divider(
+                        color: Colors.black,
+                        thickness: 0.2,
+                        endIndent: 10,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (lowTasks.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 20.0),
+                  child: SizedBox(
+                    height: 150,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: lowTasks.map((task) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: TaskClips(
+                            taskDesc: task['task-desc'],
+                            taskName: task['task-name'],
+                            taskDate: task['task-date']
+                                .toLocal()
+                                .toString()
+                                .split(' ')[0],
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
