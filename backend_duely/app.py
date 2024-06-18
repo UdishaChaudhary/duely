@@ -3,7 +3,7 @@ from collections.abc import MutableMapping  # Correct import for Python 3.10+
 import pymongo
 from urllib.parse import quote_plus
 import certifi
-
+import os
 
 # Initialize the Flask application
 app = Flask(__name__)
@@ -50,4 +50,6 @@ def homepage():
     return jsonify({'tasks': tasks}), 200
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    #app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
