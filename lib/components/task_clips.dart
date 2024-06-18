@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:ui'; // Add this line to import ImageFilter
 
 class TaskClips extends StatefulWidget {
   final String taskDesc;
@@ -33,79 +34,84 @@ class _TaskClipsState extends State<TaskClips> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: _isTaskTabPressed ? Colors.grey : Color.fromARGB(255, 255, 255, 255),
+            color: _isTaskTabPressed
+                ? const Color.fromARGB(98, 158, 158, 158)
+                : Color.fromARGB(255, 255, 255, 255),
             width: 1,
           ),
         ),
         child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: Container(
-          width: 200,
-          decoration: BoxDecoration(
-            color: _isTaskTabPressed
-                ? Colors.grey
-                : Color.fromARGB(255, 218, 207, 238),
-          ),
-          padding: const EdgeInsets.all(16.0),
+          borderRadius: BorderRadius.circular(20),
           child: Stack(
             children: [
-              Align(
-                alignment: Alignment.topRight,
-                child: PopupMenuButton<int>(
-                  icon: Icon(Icons.more_vert, color: Colors.black, size: 30),
-                  onSelected: (item) => onSelected(context, item),
-                  itemBuilder: (context) => [
-                    PopupMenuItem<int>(value: 0, child: Text('Edit')),
-                    PopupMenuItem<int>(value: 1, child: Text('Delete')),
+              Container(
+                width: 200,
+                decoration: BoxDecoration(
+                    color: Color.fromARGB(159, 169, 213, 202),
+                ),
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      widget.taskName,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      'Due: ${widget.taskDate}',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 14,
+                      ),
+                    ),
                   ],
                 ),
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    widget.taskName,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+              if (_isTaskTabPressed)
+                BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 8.0, sigmaY: 8.0),
+                  child: Container(
+                    width: 200,
+                    decoration: BoxDecoration(
+                      color: Color.fromARGB(0, 0, 0, 0),
                     ),
                   ),
-                  /*SizedBox(height: 8),
-                  Text(
-                    widget.taskDesc,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 14,
-                    ),
-                  ),*/
-                  SizedBox(height: 8),
-                  Text(
-                    'Due: ${widget.taskDate}',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 14,
-                    ),
-                  ),
-                ],
+                ),
+              Positioned.fill(
+                child: Align(
+                  alignment: Alignment.center,
+                  child: _isTaskTabPressed
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.edit, size: 35),
+                              onPressed: () {
+                                // Add your edit button functionality here
+                              },
+                            ),
+                            SizedBox(width: 5),
+                            IconButton(
+                              icon: Icon(Icons.delete, size: 35),
+                              onPressed: () {
+                                // Add your edit button functionality here
+                              },
+                            ),
+                          ],
+                        )
+                      : Container(),
+                ),
               ),
             ],
           ),
         ),
       ),
-      ),
     );
-  }
-
-  void onSelected(BuildContext context, int item) {
-    switch (item) {
-      case 0:
-        // Handle edit action
-        break;
-      case 1:
-        // Handle delete action
-        break;
-    }
   }
 }

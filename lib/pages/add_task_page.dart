@@ -38,7 +38,7 @@ class _AddTaskState extends State<AddTask> {
     };
 
     final response = await http.post(
-      Uri.parse('http://127.0.0.1:5000/add-task'),
+      Uri.parse('https://duely-epp4.onrender.com/add-task'),
       headers: {
         'Content-Type': 'application/json',
       },
@@ -228,7 +228,6 @@ class _AddTaskState extends State<AddTask> {
                     width: 280,
                     dropdownMenuEntries: <DropdownMenuEntry<String>>[
                       DropdownMenuEntry(value: 'Critical', label: 'Critical'),
-                      DropdownMenuEntry(value: 'High', label: 'High'),
                       DropdownMenuEntry(value: 'Medium', label: 'Medium'),
                       DropdownMenuEntry(value: 'Low', label: 'Low'),
                     ],

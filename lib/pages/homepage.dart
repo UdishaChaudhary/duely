@@ -66,7 +66,7 @@ class _MyHompageState extends State<MyHompage> {
     }
 
     final response = await http.post(
-      Uri.parse('http://127.0.0.1:5000/homepage'),
+      Uri.parse('https://duely-epp4.onrender.com/homepage'),
       headers: {
         'Content-Type': 'application/json',
       },
@@ -75,7 +75,6 @@ class _MyHompageState extends State<MyHompage> {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      print('Reminders fetched successfully: $data');
       // Ensure each task is a Map<String, dynamic>
       List<Map<String, dynamic>> tasks =
           List<Map<String, dynamic>>.from(data['tasks']);
@@ -90,8 +89,6 @@ class _MyHompageState extends State<MyHompage> {
               })
           .toList());
 
-      print(criticalTasks);
-
       mediumTasks.addAll(tasks
           .where((task) => task['priority'] == 'Medium')
           .map((task) => {
@@ -101,8 +98,6 @@ class _MyHompageState extends State<MyHompage> {
                 'task-name': task['task-name'],
               })
           .toList());
-
-      print(mediumTasks);
 
       lowTasks.addAll(tasks
           .where((task) => task['priority'] == 'Low')
@@ -114,7 +109,6 @@ class _MyHompageState extends State<MyHompage> {
               })
           .toList());
 
-      print(lowTasks);
     } else {
       print('Failed to fetch reminders: ${response.body}');
     }
@@ -131,7 +125,7 @@ class _MyHompageState extends State<MyHompage> {
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 255, 255, 255),
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 145, 117, 184),
+        backgroundColor: Color.fromARGB(255, 108, 135, 95),
         /* leading: IconButton(
         icon: const Icon(Icons.add_alert, color: Colors.white),
         onPressed: () {
@@ -151,7 +145,7 @@ class _MyHompageState extends State<MyHompage> {
       ),
       endDrawer: Drawer(
         child: Container(
-          color: Color.fromARGB(255, 199, 188, 209),
+          color: Color.fromARGB(255, 194, 209, 188),
           child: ListView(
             children: [
               DrawerHeader(
@@ -208,14 +202,14 @@ class _MyHompageState extends State<MyHompage> {
                       padding: const EdgeInsets.only(top: 12.0),
                       child: Container(
                         decoration: BoxDecoration(
-                          color: Color.fromARGB(143, 155, 114, 208),
+                          color: Color.fromARGB(255, 255, 255, 255),
                           borderRadius: BorderRadius.circular(15),
-                          /*border: Border.all(
-                                      color: Color.fromARGB(255, 97, 17, 172),
-                                      width: 0.25,),*/
+                          border: Border.all(
+                                      color: Color.fromARGB(164, 140, 152, 28),
+                                      width: 1.4,),
                           
                         ),
-                        padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
+                        padding: const EdgeInsets.only(top: 5.0, bottom: 13.0),
                         child: Column(
                           children: criticalTasks.map((task) {
                             return Padding(
@@ -226,7 +220,7 @@ class _MyHompageState extends State<MyHompage> {
                                 child: Container(
                                   width: double.infinity,
                                   decoration: BoxDecoration(
-                                    color: Color.fromRGBO(255, 255, 255, 0.97),
+                                    color: Color.fromARGB(125, 169, 201, 158),
                                     borderRadius: BorderRadius.circular(15),
                                   ),
                                   padding: const EdgeInsets.all(16.0),
@@ -271,17 +265,18 @@ class _MyHompageState extends State<MyHompage> {
                   Container(
                     width: 200, // or any width you prefer
                     height: 28, // or any height you prefer
+                    alignment: Alignment.center,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      color: Color.fromARGB(255, 144, 90, 182),
+                      color: Color.fromARGB(255, 71, 117, 69),
                     ),
                     child: Text(
                       'Today\'s Top Reminders',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontFamily: GoogleFonts.marcellus().fontFamily,
+                        fontFamily: GoogleFonts.roboto().fontFamily,
                         color: Colors.white,
-                        fontSize: 16,
+                        fontSize: 15,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -304,18 +299,19 @@ class _MyHompageState extends State<MyHompage> {
                     Container(
                       width: 180, // or any width you prefer
                       height: 28, // or any height you prefer
+                      alignment: Alignment.center,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
-                        color: Color.fromARGB(220, 138, 104, 169),
+                        color: Color.fromARGB(255, 71, 117, 69),
                       ),
                       child: Text(
                         'Medium Priority',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 16,
+                          fontSize: 15,
                           fontWeight: FontWeight.w500,
-                          fontFamily: GoogleFonts.marcellus().fontFamily,
+                          fontFamily: GoogleFonts.roboto().fontFamily,
 
                         ),
                       ),
@@ -369,18 +365,19 @@ class _MyHompageState extends State<MyHompage> {
                     Container(
                       width: 180, // or any width you prefer
                       height: 28, // or any height you prefer
+                      alignment: Alignment.center,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
-                        color: Color.fromARGB(255, 106, 111, 168),
+                        color: Color.fromARGB(255, 71, 117, 69),
                       ),
                       child: Text(
                         'Low Priority',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 16,
+                          fontSize: 15,
                           fontWeight: FontWeight.w500,
-                          fontFamily: GoogleFonts.marcellus().fontFamily,
+                          fontFamily: GoogleFonts.roboto().fontFamily,
 
                         ),
                       ),
