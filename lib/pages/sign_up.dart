@@ -41,7 +41,7 @@ class _signUpPageState extends State<signUpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-            backgroundColor: Color.fromARGB(255, 145, 102, 188),
+        backgroundColor: Color.fromARGB(255, 108, 135, 95),
             title: Text(
               "Duely",
               style: GoogleFonts.calligraffitti(

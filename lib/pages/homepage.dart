@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:duely/pages/add_task_page.dart';
 import 'package:duely/pages/login.dart';
 import 'package:flutter/material.dart';
@@ -8,30 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:duely/components/task_clips.dart';
 import "package:http/http.dart" as http;
 import "dart:convert";
-
-/*
-class Task {
-  final String priority;
-  final DateTime taskDate;
-  final String taskDesc;
-  final String taskName;
-
-  Task({
-    required this.priority,
-    required this.taskDate,
-    required this.taskDesc,
-    required this.taskName,
-  });
-
-  factory Task.fromMap(Map<String, dynamic> map) {
-    return Task(
-      priority: map['priority'],
-      taskDate: DateTime.parse(map['task-date']),
-      taskDesc: map['task-desc'],
-      taskName: map['task-name'],
-    );
-  }
-}*/
+import 'package:duely/pages/edit_task_page.dart';
 
 class MyHompage extends StatefulWidget {
   MyHompage({super.key});
@@ -108,7 +83,6 @@ class _MyHompageState extends State<MyHompage> {
                 'task-name': task['task-name'],
               })
           .toList());
-
     } else {
       print('Failed to fetch reminders: ${response.body}');
     }
@@ -205,9 +179,9 @@ class _MyHompageState extends State<MyHompage> {
                           color: Color.fromARGB(255, 255, 255, 255),
                           borderRadius: BorderRadius.circular(15),
                           border: Border.all(
-                                      color: Color.fromARGB(164, 140, 152, 28),
-                                      width: 1.4,),
-                          
+                            color: Color.fromARGB(164, 140, 152, 28),
+                            width: 1.4,
+                          ),
                         ),
                         padding: const EdgeInsets.only(top: 5.0, bottom: 13.0),
                         child: Column(
@@ -268,7 +242,7 @@ class _MyHompageState extends State<MyHompage> {
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      color: Color.fromARGB(255, 71, 117, 69),
+                      color: Color.fromARGB(255, 138, 125, 78),
                     ),
                     child: Text(
                       'Today\'s Top Reminders',
@@ -292,34 +266,25 @@ class _MyHompageState extends State<MyHompage> {
                       child: Divider(
                         color: Colors.black,
                         thickness: 0.2,
-                        endIndent: 0,
+                        endIndent: 15,
                         indent: 10,
                       ),
                     ),
-                    Container(
-                      width: 180, // or any width you prefer
-                      height: 28, // or any height you prefer
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: Color.fromARGB(255, 71, 117, 69),
-                      ),
-                      child: Text(
-                        'Medium Priority',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                          fontFamily: GoogleFonts.roboto().fontFamily,
-
-                        ),
+                    Text(
+                      'MEDIUM PRIORITY',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: const Color.fromARGB(255, 39, 39, 39),
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: GoogleFonts.roboto().fontFamily,
                       ),
                     ),
                     Flexible(
                       child: Divider(
                         color: const Color.fromARGB(255, 0, 0, 0),
                         thickness: 0.2,
+                        indent: 15,
                         endIndent: 10,
                       ),
                     ),
@@ -339,6 +304,7 @@ class _MyHompageState extends State<MyHompage> {
                           child: TaskClips(
                             taskDesc: task['task-desc'],
                             taskName: task['task-name'],
+                            priority: task['priority'],
                             taskDate: task['task-date']
                                 .toLocal()
                                 .toString()
@@ -358,34 +324,25 @@ class _MyHompageState extends State<MyHompage> {
                       child: Divider(
                         color: Colors.black,
                         thickness: 0.2,
-                        endIndent: 0,
+                        endIndent: 20,
                         indent: 10,
                       ),
                     ),
-                    Container(
-                      width: 180, // or any width you prefer
-                      height: 28, // or any height you prefer
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: Color.fromARGB(255, 71, 117, 69),
-                      ),
-                      child: Text(
-                        'Low Priority',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                          fontFamily: GoogleFonts.roboto().fontFamily,
-
-                        ),
+                    Text(
+                      'LOW PRIORITY',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: const Color.fromARGB(255, 39, 39, 39),
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: GoogleFonts.roboto().fontFamily,
                       ),
                     ),
                     Flexible(
                       child: Divider(
                         color: Colors.black,
                         thickness: 0.2,
+                        indent: 20,
                         endIndent: 10,
                       ),
                     ),
@@ -405,6 +362,7 @@ class _MyHompageState extends State<MyHompage> {
                           child: TaskClips(
                             taskDesc: task['task-desc'],
                             taskName: task['task-name'],
+                            priority: task['priority'],
                             taskDate: task['task-date']
                                 .toLocal()
                                 .toString()

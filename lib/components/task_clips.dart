@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'dart:ui'; // Add this line to import ImageFilter
+import "package:duely/pages/edit_task_page.dart";
 
 class TaskClips extends StatefulWidget {
   final String taskDesc;
   final String taskName;
   final String taskDate;
+  final String priority;
 
-  const TaskClips({
-    Key? key,
-    required this.taskDesc,
-    required this.taskName,
-    required this.taskDate,
-  }) : super(key: key);
+  const TaskClips(
+      {super.key,
+      required this.taskDesc,
+      required this.taskName,
+      required this.taskDate,
+      required this.priority});
 
   @override
   State<TaskClips> createState() => _TaskClipsState();
@@ -47,7 +49,7 @@ class _TaskClipsState extends State<TaskClips> {
               Container(
                 width: 200,
                 decoration: BoxDecoration(
-                    color: Color.fromARGB(159, 169, 213, 202),
+                  color: Color.fromARGB(159, 169, 213, 202),
                 ),
                 padding: const EdgeInsets.all(10.0),
                 child: Column(
@@ -93,14 +95,18 @@ class _TaskClipsState extends State<TaskClips> {
                             IconButton(
                               icon: Icon(Icons.edit, size: 35),
                               onPressed: () {
-                                // Add your edit button functionality here
-                              },
-                            ),
-                            SizedBox(width: 5),
-                            IconButton(
-                              icon: Icon(Icons.delete, size: 35),
-                              onPressed: () {
-                                // Add your edit button functionality here
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => EditTask(
+                                      taskDesc: widget.taskDesc,
+                                      taskName: widget.taskName,
+                                      priority:
+                                          'Medium', // Replace with actual priority if available
+                                      taskDate: widget.taskDate,
+                                    ),
+                                  ),
+                                );
                               },
                             ),
                           ],

@@ -20,9 +20,45 @@ class _LoginPageState extends State<LoginPage> {
   final passwordController = TextEditingController();
 
   Future logIn() async {
-    await FirebaseAuth.instance.signInWithEmailAndPassword(
+    try {
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailController.text.trim(),
-        password: passwordController.text.trim());
+        password: passwordController.text.trim(),
+      );
+      print("User signed in: $userCredential");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Login successful')),
+      );
+    } on FirebaseAuthException catch (e) {
+      String errorMessage;
+      if (e.code == 'invalid-email') {
+        errorMessage = 'The email address is not valid.';
+      } else if (e.code == 'user-disabled') {
+        errorMessage =
+            'The user corresponding to the given email has been disabled.';
+      } else if (e.code == 'user-not-found') {
+        errorMessage = 'There is no user corresponding to the given email.';
+      } else if (e.code == 'wrong-password') {
+        errorMessage =
+            'The password is invalid for the given email, or the account does not have a password.';
+      } else if (e.code == 'The supplied auth credential is malformed or has expired.'){
+        errorMessage =
+            'Email or password provided are incorrect';
+      }
+      else {
+        errorMessage = 'An unexpected error occurred: ${e.message}';
+      }
+      print(errorMessage);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(errorMessage)),
+      );
+    } catch (e) {
+      print('An unexpected error occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('An unexpected error occurred.')),
+      );
+    }
   }
 
   @override
@@ -36,7 +72,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-            backgroundColor: Color.fromARGB(255, 145, 102, 188),
+            backgroundColor: Color.fromARGB(255, 108, 135, 95),
             title: Text("Duely",
                 style: GoogleFonts.calligraffitti(
                     color: Colors.white,

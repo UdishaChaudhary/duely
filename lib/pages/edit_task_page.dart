@@ -7,15 +7,25 @@ import "package:http/http.dart" as http;
 import 'package:google_fonts/google_fonts.dart';
 import "dart:convert";
 
-class AddTask extends StatefulWidget {
-  AddTask({super.key});
+class EditTask extends StatefulWidget {
+  final String taskDesc;
+  final String taskName;
+  final String priority;
+  final String taskDate;
+
+  EditTask({
+    super.key,
+    required this.taskDesc,
+    required this.taskName,
+    required this.priority,
+    required this.taskDate,
+  });
 
   @override
-  State<AddTask> createState() => _AddTaskState();
+  State<EditTask> createState() => _EditTaskState();
 }
 
-class _AddTaskState extends State<AddTask> {
-  DateTime _dateTime = DateTime.now();
+class _EditTaskState extends State<EditTask> {
   String _dropdownValue = "";
   final taskName = TextEditingController();
   final description = TextEditingController();
@@ -25,18 +35,29 @@ class _AddTaskState extends State<AddTask> {
   // Get the current user
   final User? currentUser = FirebaseAuth.instance.currentUser;
 
-  Future<bool> submitReminder() async {
+  String _dateTime = "";
+
+  @override
+  void initState() {
+    super.initState();
+    taskName.text = widget.taskName;
+    description.text = widget.taskDesc;
+    _dropdownValue = widget.priority;
+    _dateTime = widget.taskDate;
+  }
+
+  Future<bool> editReminder() async {
     print(currentUser);
     final reminderDetails = {
       "user_id": currentUser?.email,
       "task-name": taskName.text.trim(),
       "task-desc": description.text.trim(),
-      "task-date": _dateTime.toIso8601String(),
+      "task-date": _dateTime,
       "priority": _dropdownValue // Convert DateTime to ISO 8601 string
     };
 
     final response = await http.post(
-      Uri.parse('https://duely-epp4.onrender.com/add-task'),
+      Uri.parse('https://duely-epp4.onrender.com/edit-task'),
       headers: {
         'Content-Type': 'application/json',
       },
@@ -55,21 +76,22 @@ class _AddTaskState extends State<AddTask> {
     }
   }
 
-  void _showDatePicker(BuildContext ctx) async {
-    DateTime? pickedDate = await showDatePicker(
-      context: ctx,
+  void _showDatePicker() {
+    showDatePicker(
+      context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2024),
       lastDate: DateTime(2030),
-    );
-
-    if (pickedDate != null) {
+    ).then((value) {
       setState(() {
-        _dateTime = pickedDate;
-        dateController.text =
-            "${_dateTime.day}-${_dateTime.month}-${_dateTime.year}"; // Update the controller with the selected date
+        DateTime getdate =
+            value!; //The exclamation mark ! is the null assertion operator in Dart.
+        //value! asserts that value is not null.
+        _dateTime =
+            "${getdate.day}-${getdate.month}-${getdate.year}"; // Update the controller with the selected date
+        dateController.text = _dateTime;
       });
-    }
+    });
   }
 
   @override
@@ -78,62 +100,12 @@ class _AddTaskState extends State<AddTask> {
       backgroundColor: Color.fromARGB(255, 244, 246, 242),
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 108, 135, 95),
-        /* leading: IconButton(
-        icon: const Icon(Icons.add_alert, color: Colors.white),
-        onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-            return AddTask();
-          }));
-        },
-      ),*/
         title: Text(
-          'Duely',
+          "Duely",
           style: GoogleFonts.calligraffitti(
-            color: Color.fromARGB(255, 255, 255, 255),
+            color: Colors.white,
             fontSize: 28,
             fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-      endDrawer: Drawer(
-        child: Container(
-          color: Color.fromARGB(255, 194, 209, 188),
-          child: ListView(
-            children: [
-              DrawerHeader(
-                child: Icon(
-                  Icons.home,
-                  size: 45,
-                ),
-              ),
-              ListTile(
-                leading: Icon(Icons.home),
-                title: Text('Homepage',
-                    style: TextStyle(fontSize: 14, color: Color(0xFF323030))),
-                onTap: () {
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => MyHompage()));
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.add),
-                title: Text('Add Task',
-                    style: TextStyle(fontSize: 14, color: Color(0xFF323030))),
-                onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-                    return AddTask();
-                  }));
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.lock),
-                title: Text('Logout',
-                    style: TextStyle(fontSize: 14, color: Color(0xFF323030))),
-                onTap: () {
-                  FirebaseAuth.instance.signOut();
-                },
-              ),
-            ],
           ),
         ),
       ),
@@ -142,7 +114,7 @@ class _AddTaskState extends State<AddTask> {
           children: [
             const SizedBox(height: 40),
             Text(
-              'Set a new task',
+              'Edit this reminder',
               style: TextStyle(
                   color: Color.fromARGB(255, 0, 0, 0),
                   fontSize: 20,
@@ -164,7 +136,7 @@ class _AddTaskState extends State<AddTask> {
                 ),
                 MyTextField(
                   controller: taskName,
-                  hintText: 'Give a title to this reminder',
+                  hintText: 'Enter task name',
                   obscureText: false,
                 ),
                 const SizedBox(height: 30),
@@ -180,7 +152,7 @@ class _AddTaskState extends State<AddTask> {
                 ),
                 MyTextField(
                   controller: description,
-                  hintText: 'Description',
+                  hintText: 'Enter task description',
                   obscureText: false,
                 ),
                 const SizedBox(height: 30),
@@ -217,7 +189,9 @@ class _AddTaskState extends State<AddTask> {
                                   color:
                                       const Color.fromARGB(255, 217, 217, 217)),
                             ),
-                            labelText: 'Choose Date',
+                            labelText: dateController.text.isEmpty
+                                ? widget.taskDate
+                                : dateController.text,
                             filled: true,
                           ),
                         ),
@@ -229,7 +203,7 @@ class _AddTaskState extends State<AddTask> {
                         width: 70, // Adjust the width of the calendar container
                         height: 56,
                         child: ElevatedButton(
-                          onPressed: () => _showDatePicker(context),
+                          onPressed: () => _showDatePicker(),
                           style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15.0),
@@ -247,55 +221,71 @@ class _AddTaskState extends State<AddTask> {
                   padding:
                       const EdgeInsets.only(left: 20.0, right: 20, bottom: 5),
                   child: Container(
-                      width: 200,
-                      height: 45,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                            color: Colors.grey, width: 0.5), // Add border here
-                        borderRadius: BorderRadius.circular(15.0),
+                    width: 200,
+                    height: 45,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey, width: 0.5),
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: _dropdownValue,
+                        icon: Icon(Icons.arrow_drop_down),
+                        iconSize: 36,
+                        elevation: 16,
+                        isExpanded: true,
+                        style: TextStyle(color: Colors.black, fontSize: 16),
+                        onChanged: (newValue) {
+                          setState(() {
+                            _dropdownValue = newValue!;
+                          });
+                        },
+                        items: <String>['Critical', 'Medium', 'Low']
+                            .map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 16),
+                              child: Text(value),
+                            ),
+                          );
+                        }).toList(),
                       ),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          value: _dropdownValue.isEmpty ? null : _dropdownValue,
-                          hint: const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 10.0),
-                            child: Text('Select Task Priority'),
-                          ),
-                          items: <String>['Critical', 'Medium', 'Low']
-                              .map((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10.0),
-                                child: Text(value),
-                              ),
-                            );
-                          }).toList(),
-                          onChanged: (newValue) {
-                            setState(() {
-                              _dropdownValue = newValue!;
-                            });
-                          },
-                        ),
-                      )),
+                    ),
+                  ),
                 ),
-                const SizedBox(height: 40), // Ensure you close this widget
+                const SizedBox(height: 60),
                 Container(
                   alignment: Alignment.center,
-                  child: MyButton(
-                      buttonName: "Submit",
-                      onTap: () async {
-                        bool success = await submitReminder();
-                        if (success) {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text('Reminder added successfully')));
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text('Failed to add reminder')));
-                        }
-                      }),
-                )
+                  child: Column(children: [ 
+                  MyButton(
+                    buttonName: "Save",
+                    onTap: () async {
+                      bool success = await editReminder();
+                      if (success) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text('Reminder added successfully')));
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Failed to add reminder')));
+                      }
+                    }),
+                    const SizedBox(height: 20),
+                    MyButton(
+                    buttonName: "Delete",
+                    onTap: () async {
+                      bool success = await editReminder();
+                      if (success) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text('Reminder added successfully')));
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Failed to add reminder')));
+                      }
+                    }),
+                    
+                ],))
+                
               ],
             ),
           ],
