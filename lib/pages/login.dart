@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:duely/components/button.dart';
 import "package:firebase_auth/firebase_auth.dart";
 import 'package:flutter/material.dart'; // gives access to pre-defined widgets including
+import 'package:duely/pages/homepage.dart';
+
 
 class LoginPage extends StatefulWidget {
   final VoidCallback showSignupPage;
@@ -21,8 +23,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Future logIn() async {
     try {
-      UserCredential userCredential =
-          await FirebaseAuth.instance.signInWithEmailAndPassword(
+      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
@@ -30,23 +31,21 @@ class _LoginPageState extends State<LoginPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Login successful')),
       );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => MyHompage()));
+      
     } on FirebaseAuthException catch (e) {
       String errorMessage;
       if (e.code == 'invalid-email') {
         errorMessage = 'The email address is not valid.';
       } else if (e.code == 'user-disabled') {
-        errorMessage =
-            'The user corresponding to the given email has been disabled.';
+        errorMessage = 'The user corresponding to the given email has been disabled.';
       } else if (e.code == 'user-not-found') {
         errorMessage = 'There is no user corresponding to the given email.';
       } else if (e.code == 'wrong-password') {
-        errorMessage =
-            'The password is invalid for the given email, or the account does not have a password.';
-      } else if (e.code == 'The supplied auth credential is malformed or has expired.'){
-        errorMessage =
-            'Email or password provided are incorrect';
-      }
-      else {
+        errorMessage = 'The password is invalid for the given email, or the account does not have a password.';
+      } else {
         errorMessage = 'An unexpected error occurred: ${e.message}';
       }
       print(errorMessage);
@@ -60,7 +59,6 @@ class _LoginPageState extends State<LoginPage> {
       );
     }
   }
-
   @override
   void dispose() {
     emailController.dispose();

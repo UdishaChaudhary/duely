@@ -1,4 +1,5 @@
 import "package:duely/components/button.dart";
+import 'package:duely/pages/login.dart';
 import "package:duely/components/my_text_field.dart";
 import "package:flutter/material.dart";
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,7 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import "dart:convert";
 
 class AddTask extends StatefulWidget {
-  AddTask({super.key});
+  AddTask({Key? key}) : super(key: key);
 
   @override
   State<AddTask> createState() => _AddTaskState();
@@ -16,14 +17,37 @@ class AddTask extends StatefulWidget {
 
 class _AddTaskState extends State<AddTask> {
   DateTime _dateTime = DateTime.now();
+
+  // final add_task_url = "https://duely-epp4.onrender.com/add-task";
+  final add_task_url = "http://127.0.0.1:5000/add-task";
+
   String _dropdownValue = "";
   final taskName = TextEditingController();
   final description = TextEditingController();
   final dateController =
       TextEditingController(); // Controller for the date TextField
+  List<TextEditingController> participantControllers = [];
 
   // Get the current user
   final User? currentUser = FirebaseAuth.instance.currentUser;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the first participant text field controller
+    participantControllers.add(TextEditingController());
+  }
+
+  @override
+  void dispose() {
+    taskName.dispose();
+    description.dispose();
+    dateController.dispose();
+    for (var controller in participantControllers) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
 
   Future<bool> submitReminder() async {
     print(currentUser);
@@ -32,11 +56,14 @@ class _AddTaskState extends State<AddTask> {
       "task-name": taskName.text.trim(),
       "task-desc": description.text.trim(),
       "task-date": _dateTime.toIso8601String(),
-      "priority": _dropdownValue // Convert DateTime to ISO 8601 string
+      "priority": _dropdownValue, // Convert DateTime to ISO 8601 string
+      "participants": participantControllers
+          .map((controller) => controller.text.trim())
+          .toList(),
     };
 
     final response = await http.post(
-      Uri.parse('https://duely-epp4.onrender.com/add-task'),
+      Uri.parse(add_task_url),
       headers: {
         'Content-Type': 'application/json',
       },
@@ -72,20 +99,18 @@ class _AddTaskState extends State<AddTask> {
     }
   }
 
+  void _addParticipantField() {
+    setState(() {
+      participantControllers.add(TextEditingController());
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 244, 246, 242),
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 108, 135, 95),
-        /* leading: IconButton(
-        icon: const Icon(Icons.add_alert, color: Colors.white),
-        onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-            return AddTask();
-          }));
-        },
-      ),*/
         title: Text(
           'Duely',
           style: GoogleFonts.calligraffitti(
@@ -129,8 +154,14 @@ class _AddTaskState extends State<AddTask> {
                 leading: Icon(Icons.lock),
                 title: Text('Logout',
                     style: TextStyle(fontSize: 14, color: Color(0xFF323030))),
-                onTap: () {
-                  FirebaseAuth.instance.signOut();
+                onTap: () async {
+                  await FirebaseAuth.instance.signOut();
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => LoginPage(showSignupPage: () {})),
+                    (route) => false,
+                  );
                 },
               ),
             ],
@@ -138,95 +169,100 @@ class _AddTaskState extends State<AddTask> {
         ),
       ),
       body: Center(
-        child: Column(
-          children: [
-            const SizedBox(height: 40),
-            Text(
-              'Set a new task',
-              style: TextStyle(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Set a new task',
+                style: TextStyle(
                   color: Color.fromARGB(255, 0, 0, 0),
                   fontSize: 20,
-                  fontWeight: FontWeight.w300),
-            ),
-            const SizedBox(height: 25),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 20.0, bottom: 5),
-                  child: Text(
-                    'Title',
-                    style: TextStyle(
+                  fontWeight: FontWeight.w300,
+                ),
+              ),
+              SizedBox(height: 25),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 5),
+                    child: Text(
+                      'Title',
+                      style: TextStyle(
                         color: const Color.fromARGB(255, 39, 39, 39),
                         fontSize: 16,
-                        fontWeight: FontWeight.w500),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ),
-                ),
-                MyTextField(
-                  controller: taskName,
-                  hintText: 'Give a title to this reminder',
-                  obscureText: false,
-                ),
-                const SizedBox(height: 30),
-                Padding(
-                  padding: const EdgeInsets.only(left: 20.0, bottom: 5),
-                  child: Text(
-                    'Description (Optional)',
-                    style: TextStyle(
+                  MyTextField(
+                    controller: taskName,
+                    hintText: 'Give a title to this reminder',
+                    obscureText: false,
+                  ),
+                  SizedBox(height: 30),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 5),
+                    child: Text(
+                      'Description (Optional)',
+                      style: TextStyle(
                         color: const Color.fromARGB(255, 39, 39, 39),
                         fontSize: 16,
-                        fontWeight: FontWeight.w500),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ),
-                ),
-                MyTextField(
-                  controller: description,
-                  hintText: 'Description',
-                  obscureText: false,
-                ),
-                const SizedBox(height: 30),
-                Padding(
-                  padding: const EdgeInsets.only(left: 20.0, bottom: 5),
-                  child: Text(
-                    'Final Date (dd-mm-yy)',
-                    style: TextStyle(
+                  MyTextField(
+                    controller: description,
+                    hintText: 'Description',
+                    obscureText: false,
+                  ),
+                  SizedBox(height: 30),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 5),
+                    child: Text(
+                      'Final Date (dd-mm-yy)',
+                      style: TextStyle(
                         color: const Color.fromARGB(255, 39, 39, 39),
                         fontSize: 16,
-                        fontWeight: FontWeight.w500),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-                  child: Row(
+                  Row(
                     children: [
                       Expanded(
-                          child: Container(
-                        height: 60,
-                        child: TextField(
-                          controller: dateController,
-                          readOnly: true,
-                          decoration: InputDecoration(
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20),
-                              borderSide: BorderSide(
+                        child: Container(
+                          height: 60,
+                          child: TextField(
+                            controller: dateController,
+                            readOnly: true,
+                            decoration: InputDecoration(
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20),
+                                borderSide: BorderSide(
                                   color:
-                                      const Color.fromARGB(255, 217, 217, 217)),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20),
-                              borderSide: BorderSide(
+                                      const Color.fromARGB(255, 217, 217, 217),
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20),
+                                borderSide: BorderSide(
                                   color:
-                                      const Color.fromARGB(255, 217, 217, 217)),
+                                      const Color.fromARGB(255, 217, 217, 217),
+                                ),
+                              ),
+                              labelText: 'Choose Date',
+                              filled: true,
                             ),
-                            labelText: 'Choose Date',
-                            filled: true,
                           ),
                         ),
-                      )),
+                      ),
+                      SizedBox(width: 10),
                       SizedBox(
-                          width:
-                              10), // Add space between the TextField and the button (if needed)
-                      SizedBox(
-                        width: 70, // Adjust the width of the calendar container
+                        width: 70,
                         height: 56,
                         child: ElevatedButton(
                           onPressed: () => _showDatePicker(context),
@@ -241,17 +277,18 @@ class _AddTaskState extends State<AddTask> {
                       ),
                     ],
                   ),
-                ),
-                const SizedBox(height: 40),
-                Padding(
-                  padding:
-                      const EdgeInsets.only(left: 20.0, right: 20, bottom: 5),
-                  child: Container(
+                  const SizedBox(height: 40),
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(left: 20.0, right: 20, bottom: 5),
+                    child: Container(
                       width: 200,
                       height: 45,
                       decoration: BoxDecoration(
                         border: Border.all(
-                            color: Colors.grey, width: 0.5), // Add border here
+                          color: Colors.grey,
+                          width: 0.5,
+                        ),
                         borderRadius: BorderRadius.circular(15.0),
                       ),
                       child: DropdownButtonHideUnderline(
@@ -278,27 +315,85 @@ class _AddTaskState extends State<AddTask> {
                             });
                           },
                         ),
-                      )),
-                ),
-                const SizedBox(height: 40), // Ensure you close this widget
-                Container(
-                  alignment: Alignment.center,
-                  child: MyButton(
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 30),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 5),
+                    child: Text(
+                      'Add Participants (Optional)',
+                      style: TextStyle(
+                        color: const Color.fromARGB(255, 39, 39, 39),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  Column(
+                    children: [
+                      ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: participantControllers.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: MyTextField(
+                                    controller: participantControllers[index],
+                                    hintText: 'Enter email',
+                                    obscureText: false,
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.remove_circle),
+                                  onPressed: () {
+                                    setState(() {
+                                      participantControllers.removeAt(index);
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                      SizedBox(height: 10),
+                      IconButton(
+                        icon: Icon(Icons.add_circle),
+                        onPressed: _addParticipantField,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 40),
+                  Container(
+                    alignment: Alignment.center,
+                    child: MyButton(
                       buttonName: "Submit",
                       onTap: () async {
                         bool success = await submitReminder();
                         if (success) {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text('Reminder added successfully')));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Reminder added successfully'),
+                            ),
+                          );
                         } else {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text('Failed to add reminder')));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Failed to add reminder'),
+                            ),
+                          );
                         }
-                      }),
-                )
-              ],
-            ),
-          ],
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

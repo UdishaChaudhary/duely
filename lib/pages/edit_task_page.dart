@@ -103,7 +103,7 @@ class _EditTaskState extends State<EditTask> {
         title: Text(
           "Duely",
           style: GoogleFonts.calligraffitti(
-            color: Colors.white,
+            color: Color.fromARGB(255, 255, 255, 255),
             fontSize: 28,
             fontWeight: FontWeight.bold,
           ),
