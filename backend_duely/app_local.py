@@ -3,6 +3,8 @@ from collections.abc import MutableMapping  # Correct import for Python 3.10+
 import pymongo
 from urllib.parse import quote_plus
 import certifi
+import numpy as np
+import copy  # Import copy module for deep copy
 
 # Initialize the Flask application
 app = Flask(__name__)
@@ -29,10 +31,14 @@ def add_task():
 
     try:
         print(task_data)
-        if task_data["participants"]:
-            print(task_data["participants"])
-            for participant_name in task_data["participants"]:
-                replicate_task = task_data.copy()
+        task_data["task_id"] = np.random.randint(1000, 9999)  # Generate a random 4-digit number
+        task_data["status"] = "unfinished"
+        
+        participants = task_data.get("participants", [])
+        if participants != [""]:
+            print(participants)
+            for participant_name in participants:
+                replicate_task = copy.deepcopy(task_data)
                 replicate_task["user_id"] = participant_name
                 id = tasks_collection.insert_one(replicate_task)
 
@@ -42,7 +48,7 @@ def add_task():
     except Exception as e:
         print(f"Error inserting data: {e}")
         return jsonify({"error": "Failed to add task"}), 500
-
+    
 @app.route('/homepage', methods=['POST'])
 def homepage():
     data = request.get_json()
@@ -56,6 +62,32 @@ def homepage():
         task['_id'] = str(task['_id'])
 
     return jsonify({'tasks': tasks}), 200
+
+@app.route('/mark_done', methods=['POST'])
+def mark_done():
+    data = request.get_json()
+    print(data)    
+    if not data or 'taskId' not in data:
+        return jsonify({'error': 'Task ID is required'}), 400
+    
+    task_id = int(data.get('taskId'))
+    print(task_id)
+    email = data.get('email')
+    print(email)
+    try:
+        result = tasks_collection.update_one(
+            {'task_id': int(task_id), 'user_id': email},
+            {'$set': {'status': 'done'}}
+        )
+        print(result.matched_count)
+
+        if result.matched_count == 0:
+            return jsonify({'error': 'Task not found or not owned by user'}), 404
+
+        return jsonify({'message': 'Task marked as done successfully'}), 200
+    except Exception as e:
+        print(f"Error updating task status: {e}")
+        return jsonify({'error': 'Failed to mark task as done'}), 500
 
 if __name__ == "__main__":
     app.run(debug=True)
