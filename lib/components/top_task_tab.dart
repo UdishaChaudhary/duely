@@ -89,8 +89,7 @@ class _TopTaskTabState extends State<TopTaskTab> {
                     ? Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          IconButton(
-                            icon: Icon(Icons.edit, size: 35, color: Colors.white),
+                          TextButton(
                             onPressed: () {
                               Navigator.push(
                                 context,
@@ -99,11 +98,27 @@ class _TopTaskTabState extends State<TopTaskTab> {
                                     taskDesc: widget.task['task-desc'],
                                     taskName: widget.task['task-name'],
                                     priority: widget.task['priority'],
-                                    taskDate: widget.task['task-date'],
+                                    taskDate: widget.task['task-date'].toIso8601String(),
                                   ),
                                 ),
                               );
                             },
+                            child: Text("Edit",
+                                style: TextStyle(
+                                    color: Colors.black, fontSize: 20)),
+                          ),
+                          Text("|",
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 20)),
+                          TextButton(
+                            onPressed: () {
+                              // Add the task completion logic here
+                            },
+                            child: Text(
+                              "Task Done",
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 20),
+                            ),
                           ),
                         ],
                       )

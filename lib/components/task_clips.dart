@@ -1,19 +1,29 @@
 import 'package:flutter/material.dart';
-import 'dart:ui'; // Add this line to import ImageFilter
+import 'dart:ui';
 import "package:duely/pages/edit_task_page.dart";
+import "package:duely/pages/homepage.dart";
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class TaskClips extends StatefulWidget {
   final String taskDesc;
   final String taskName;
-  final String taskDate;
   final String priority;
+  final String taskId;
+  final String taskDate;
+  final String currentUser;
+  final String taskStatus;
 
-  const TaskClips(
-      {super.key,
-      required this.taskDesc,
-      required this.taskName,
-      required this.taskDate,
-      required this.priority});
+  const TaskClips({
+    super.key,
+    required this.taskDesc,
+    required this.taskName,
+    required this.priority,
+    required this.taskId,
+    required this.taskDate,
+    required this.currentUser,
+    required this.taskStatus,
+  });
 
   @override
   State<TaskClips> createState() => _TaskClipsState();
@@ -21,6 +31,36 @@ class TaskClips extends StatefulWidget {
 
 class _TaskClipsState extends State<TaskClips> {
   bool _isTaskTabPressed = false;
+  final String markDoneUrl = "http://127.0.0.1:5000/mark_done"; // Fixed URL
+
+  Future<bool> markReminder() async {
+    final reminderDetails = {
+      'taskDesc': widget.taskDesc,
+      'taskName': widget.taskName,
+      'priority': widget.priority,
+      'taskDate': widget.taskDate,
+      'taskId': widget.taskId,
+      'email': widget.currentUser,
+      'taskStatus': widget.taskStatus,
+    };
+
+    final response = await http.post(
+      Uri.parse(markDoneUrl),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(reminderDetails),
+    );
+    print(reminderDetails);
+
+    if (response.statusCode == 200) {
+      print('Reminder marked as done');
+      return true;
+    } else {
+      print('Failed to mark reminder as done');
+      return false;
+    }
+  }
 
   void taskTabPressed() {
     setState(() {
@@ -38,7 +78,7 @@ class _TaskClipsState extends State<TaskClips> {
           border: Border.all(
             color: _isTaskTabPressed
                 ? const Color.fromARGB(98, 158, 158, 158)
-                : Color.fromARGB(255, 255, 255, 255),
+                : const Color.fromARGB(255, 255, 255, 255),
             width: 1,
           ),
         ),
@@ -48,7 +88,7 @@ class _TaskClipsState extends State<TaskClips> {
             children: [
               Container(
                 width: 200,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Color.fromARGB(159, 169, 213, 202),
                 ),
                 padding: const EdgeInsets.all(10.0),
@@ -58,20 +98,41 @@ class _TaskClipsState extends State<TaskClips> {
                   children: [
                     Text(
                       widget.taskName,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.black,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Text(
                       'Due: ${widget.taskDate}',
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.black,
                         fontSize: 14,
                       ),
                     ),
+                    if (widget.taskStatus == 'done') ...[
+                      const SizedBox(height: 8),
+                      const Text(
+                        'STATUS: DONE',
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 76, 175, 91),
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ] else ...[
+                      const SizedBox(height: 8),
+                      const Text(
+                        'STATUS: PENDING',
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 255, 87, 34),
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -80,7 +141,7 @@ class _TaskClipsState extends State<TaskClips> {
                   filter: ImageFilter.blur(sigmaX: 8.0, sigmaY: 8.0),
                   child: Container(
                     width: 200,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: Color.fromARGB(0, 0, 0, 0),
                     ),
                   ),
@@ -92,8 +153,7 @@ class _TaskClipsState extends State<TaskClips> {
                       ? Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            IconButton(
-                              icon: Icon(Icons.edit, size: 35),
+                            TextButton(
                               onPressed: () {
                                 Navigator.push(
                                   context,
@@ -101,13 +161,37 @@ class _TaskClipsState extends State<TaskClips> {
                                     builder: (context) => EditTask(
                                       taskDesc: widget.taskDesc,
                                       taskName: widget.taskName,
-                                      priority:
-                                          'Medium', // Replace with actual priority if available
+                                      priority: widget.priority,
                                       taskDate: widget.taskDate,
                                     ),
                                   ),
                                 );
                               },
+                              child: const Text(
+                                "Edit",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 20,
+                                ),
+                              ),
+                            ),
+                            const Text("|",
+                                style: TextStyle(
+                                    color: Colors.black, fontSize: 20)),
+                            TextButton(
+                              onPressed: () {
+                                markReminder();
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => MyHompage(),
+                                ),);
+                              },
+                              child: const Text(
+                                "Task Done",
+                                style: TextStyle(
+                                    color: Colors.black, fontSize: 20),
+                              ),
                             ),
                           ],
                         )

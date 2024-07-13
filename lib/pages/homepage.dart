@@ -62,34 +62,40 @@ class _MyHompageState extends State<MyHompage> {
         criticalTasks.clear();
         mediumTasks.clear();
         lowTasks.clear();
-
+        print(tasks);
         criticalTasks.addAll(tasks
             .where((task) => task['priority'] == 'Critical')
             .map((task) => {
+                  'task-id': task["task_id"].toString(),
                   'priority': task['priority'],
                   'task-date': DateTime.parse(task['task-date']),
                   'task-desc': task['task-desc'],
                   'task-name': task['task-name'],
+                  'task-status': task['status']
                 })
             .toList());
 
         mediumTasks.addAll(tasks
             .where((task) => task['priority'] == 'Medium')
             .map((task) => {
+                  'task-id': task["task_id"].toString(),
                   'priority': task['priority'],
                   'task-date': DateTime.parse(task['task-date']),
                   'task-desc': task['task-desc'],
                   'task-name': task['task-name'],
+                  'task-status': task['status']
                 })
             .toList());
 
         lowTasks.addAll(tasks
             .where((task) => task['priority'] == 'Low')
             .map((task) => {
+                  'task-id': task["task_id"].toString(),
                   'priority': task['priority'],
                   'task-date': DateTime.parse(task['task-date']),
                   'task-desc': task['task-desc'],
                   'task-name': task['task-name'],
+                  'task-status': task['status']
                 })
             .toList());
 
@@ -296,6 +302,9 @@ class _MyHompageState extends State<MyHompage> {
                                   taskDesc: task['task-desc'],
                                   taskName: task['task-name'],
                                   priority: task['priority'],
+                                  taskId: task["task-id"],
+                                  currentUser: currentUser!.email!,   
+                                  taskStatus: task["task-status"],  
                                   taskDate: task['task-date']
                                       .toLocal()
                                       .toString()
@@ -355,6 +364,9 @@ class _MyHompageState extends State<MyHompage> {
                                   taskDesc: task['task-desc'],
                                   taskName: task['task-name'],
                                   priority: task['priority'],
+                                  taskId: task["task-id"],
+                                  currentUser: currentUser!.email!,  
+                                  taskStatus: task["task-status"],     
                                   taskDate: task['task-date']
                                       .toLocal()
                                       .toString()
