@@ -3,3 +3,4 @@ flask==2.0.1
 Werkzeug==2.2.2
 certifi==2024.06.02
 dnspython==2.0.0
+numpy==2.0.0
