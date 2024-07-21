@@ -18,8 +18,8 @@ class AddTask extends StatefulWidget {
 class _AddTaskState extends State<AddTask> {
   DateTime _dateTime = DateTime.now();
 
-  // final add_task_url = "https://duely-epp4.onrender.com/add-task";
-  final add_task_url = "http://127.0.0.1:5000/add-task";
+  final addTaskUrl = "https://duely-epp4.onrender.com/add-task";
+  // final add_task_url = "http://127.0.0.1:5000/add-task";
 
   String _dropdownValue = "";
   final taskName = TextEditingController();
@@ -63,7 +63,7 @@ class _AddTaskState extends State<AddTask> {
     };
 
     final response = await http.post(
-      Uri.parse(add_task_url),
+      Uri.parse(addTaskUrl),
       headers: {
         'Content-Type': 'application/json',
       },

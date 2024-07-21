@@ -31,7 +31,8 @@ class TaskClips extends StatefulWidget {
 
 class _TaskClipsState extends State<TaskClips> {
   bool _isTaskTabPressed = false;
-  final String markDoneUrl = "http://127.0.0.1:5000/mark_done"; // Fixed URL
+  final String markDoneUrl = "https://duely-epp4.onrender.com/mark_done";
+  // final String markDoneUrl = "http://127.0.0.1:5000/mark_done";
 
   Future<bool> markReminder() async {
     final reminderDetails = {

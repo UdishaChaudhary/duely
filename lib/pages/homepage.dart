@@ -19,8 +19,8 @@ class MyHompage extends StatefulWidget {
 class _MyHompageState extends State<MyHompage> {
   final user = FirebaseAuth.instance.currentUser!;
 
-  // final homepageUrl = "https://duely-epp4.onrender.com/homepage";
-  final homepageUrl = "http://127.0.0.1:5000/homepage";
+  final homepageUrl = "https://duely-epp4.onrender.com/homepage";
+  // final homepageUrl = "http://127.0.0.1:5000/homepage";
   // Get the current user
   final User? currentUser = FirebaseAuth.instance.currentUser;
 

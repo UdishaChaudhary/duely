@@ -26,6 +26,7 @@ class EditTask extends StatefulWidget {
 }
 
 class _EditTaskState extends State<EditTask> {
+  final editUrl = 'https://duely-epp4.onrender.com/edit-task';
   String _dropdownValue = "";
   final taskName = TextEditingController();
   final description = TextEditingController();
@@ -57,7 +58,7 @@ class _EditTaskState extends State<EditTask> {
     };
 
     final response = await http.post(
-      Uri.parse('https://duely-epp4.onrender.com/edit-task'),
+      Uri.parse(editUrl),
       headers: {
         'Content-Type': 'application/json',
       },
